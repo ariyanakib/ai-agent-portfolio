@@ -1,0 +1,405 @@
+{
+  "name": "Travel Agency Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -224,
+        0
+      ],
+      "id": "34d4ee19-c228-4ff5-b651-680e670a2e6c",
+      "name": "Telegram Trigger",
+      "webhookId": "2ba643eb-1c97-403c-bbff-db5fb27a6787",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZUBlm8OEh8ou597F",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "needsFallback": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        80,
+        0
+      ],
+      "id": "a522a733-0f0b-4978-8e57-80fd839a860b",
+      "name": "AI Agent",
+      "executeOnce": false,
+      "notes": "Role & Behavior You are a Dubai‑based travel agency assistant. You answer politely, clearly, and briefly (2–4 sentences). You specialize in Schengen travel services (France, Germany, Italy, Spain, Netherlands).\n\nRules for Country Coverage\n\nIf the user asks about a country outside Schengen (e.g., UK, USA, Canada): → Reply gently: “Sorry, we don’t handle that country. We currently provide services for Schengen destinations such as France, Germany, Italy, Spain, and the Netherlands.”\n\nNever claim to support countries outside this list.\n\nAnswering Rules\n\nAlways check if the user already received a similar answer.\n\nIf yes, do not repeat the same wording. Instead:\n\nRephrase with different words, OR\n\nAdd a new detail, OR\n\nOffer the next logical step (e.g., “Would you like me to suggest alternatives?”).\n\nKeep answers short and factual.\n\nNever invent details not in the knowledge base.\n\nConversation Flow\n\nFirst message: greet warmly and explain you can help with Schengen visas, packages, tickets, and policies.\n\nIf answer found: give a short, clear reply.\n\nIf answer not found: “I don’t have that exact detail, but I can guide you on Schengen visas, packages, tickets, or policies.”\n\nIf user repeats or asks follow‑up: vary the response, don’t copy the same sentence.\n\nTone & Style\n\nProfessional, polite, concise.\n\nNo long paragraphs.\n\nAvoid robotic repetition — always vary phrasing slightly."
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        256
+      ],
+      "id": "542e783c-61e2-48ae-a58a-45a58e3bc35d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "oRBnhykxC3edZutS",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        240
+      ],
+      "id": "0757024b-0c37-45e0-a511-84565e94e977",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        240
+      ],
+      "id": "1d1a762f-d095-4193-bb2e-b2436e072c84",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fmvhKG3FHVZhvgpP",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "19_koV8xuz28upyw1C9NxLD2P99YaqNqYHUGlC7kw_sc",
+          "mode": "list",
+          "cachedResultName": "VISA FAQs SHEET",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19_koV8xuz28upyw1C9NxLD2P99YaqNqYHUGlC7kw_sc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19_koV8xuz28upyw1C9NxLD2P99YaqNqYHUGlC7kw_sc/edit#gid=0"
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        224
+      ],
+      "id": "690e7a07-466d-41be-bf36-250e3978ce8f",
+      "name": "VISA FAQs SHEET",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Y2OiqY65hCT61uUm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1awaq629vzhcUNYl0FKx_lUMfePiVaJ2BIpq5EsNMtdE",
+          "mode": "list",
+          "cachedResultName": "PACKAGE FAQs SHEET",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1awaq629vzhcUNYl0FKx_lUMfePiVaJ2BIpq5EsNMtdE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1awaq629vzhcUNYl0FKx_lUMfePiVaJ2BIpq5EsNMtdE/edit#gid=0"
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        208
+      ],
+      "id": "723c4beb-14bc-4747-aec9-b325567cb6b5",
+      "name": "PACKAGE FAQs SHEET",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Y2OiqY65hCT61uUm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1By8BJRMfKzRdafx-bWbLgA211jME-_-y74_k4mw8cRM",
+          "mode": "list",
+          "cachedResultName": "AIR TICKETING FAQs SHEET",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1By8BJRMfKzRdafx-bWbLgA211jME-_-y74_k4mw8cRM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1By8BJRMfKzRdafx-bWbLgA211jME-_-y74_k4mw8cRM/edit#gid=0"
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        256
+      ],
+      "id": "d4173186-449a-455a-b0a7-0e868a921e1b",
+      "name": "AIR TICKETING FAQs SHEET",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Y2OiqY65hCT61uUm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1mTcidg9vIYvwDeBOERKy9KR9aVc_jfPORRjUXtuZGBs",
+          "mode": "list",
+          "cachedResultName": "COMPANY POLICY FAQs SHEETS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mTcidg9vIYvwDeBOERKy9KR9aVc_jfPORRjUXtuZGBs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mTcidg9vIYvwDeBOERKy9KR9aVc_jfPORRjUXtuZGBs/edit#gid=0"
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        208
+      ],
+      "id": "3b4bd16f-8aec-49cd-8e71-9a1b03fe69cb",
+      "name": "COMPANY POLICY FAQs SHEET",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "Y2OiqY65hCT61uUm",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        0
+      ],
+      "id": "e4bc62e1-01c4-4aa8-801b-a004acfd8012",
+      "name": "Send a text message",
+      "webhookId": "d6f9d28d-f127-46a2-abb6-48dfc2907e4e",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZUBlm8OEh8ou597F",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 860353572,
+          "message": {
+            "message_id": 32,
+            "from": {
+              "id": 2086664239,
+              "is_bot": false,
+              "first_name": "Ariyan",
+              "last_name": "AkiB",
+              "username": "Akkupakku26",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 2086664239,
+              "first_name": "Ariyan",
+              "last_name": "AkiB",
+              "username": "Akkupakku26",
+              "type": "private"
+            },
+            "date": 1758028278,
+            "text": "can you tell me which month is best to visit france?"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VISA FAQs SHEET": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PACKAGE FAQs SHEET": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AIR TICKETING FAQs SHEET": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "COMPANY POLICY FAQs SHEET": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7ca53c76-9924-4d0b-8c47-3bb3e077ae18",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aff51490c6b38e184477801e4528d0ddc5557b7e3ad4499502e2b16baceb1450"
+  },
+  "id": "HBbGXKoRRPdO1Cj7",
+  "tags": []
+}
