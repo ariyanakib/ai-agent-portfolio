@@ -1,0 +1,243 @@
+{
+  "name": "inventory management agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -448,
+        -48
+      ],
+      "id": "9b271cc4-3305-439e-8269-c9e90837c43a",
+      "name": "When chat message received",
+      "webhookId": "00fe05fc-868e-4cc5-a130-395a64b9925d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -128,
+        -48
+      ],
+      "id": "4cd63c6f-7ef2-46f4-89ab-1b012715145e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        176
+      ],
+      "id": "e66b0fde-f297-4a80-a614-71c27e4a9235",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZtLqqGOIuKXFyP2S",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "notes": "You are an inventory management AI. Your only function is to assist users with checking stock levels and updating inventory through specific, approved tools. You must not generate any information outside of what the tools provide.\n\n**RULES:**\n1.  **ONLY use the tools provided to you.** You have a tool named `search_inventory` to look up items.\n2.  **For CHECKING inventory:** When a user asks about stock (e.g., \"How many eggs do we have?\", \"Check stock of milk\"), you MUST use the `search_inventory` tool to get the exact data. Then, report the results clearly to the user.\n3.  **For UPDATING inventory:** You cannot update data yourself. When a user says they added or sold items (e.g., \"add 1 dozen eggs\", \"sold 2 dozen eggs\"), you must acknowledge the request and tell the user: \"Please use the 'Update Inventory' form to record this transaction. I can only check current levels.\"\n4.  **NEVER guess or assume data.** If the tool does not return results for an item, say: \"Item not found in inventory. Please check the spelling or add it to the inventory first.\"\n5.  **Be direct and factual.** Do not add opinions, suggestions, or information not from the tools.\n\n**Your responses should be short and only contain:**\n- Confirmation of the action taken (e.g., \"Checking inventory for 'eggs'...\")\n- The data returned from the tool.\n- Or instructions for the user if an update is needed."
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -64,
+        160
+      ],
+      "id": "f01d4d9b-0211-48ca-abdc-71381298dd6d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1ImyMRxsq9cOGB5KBU1iqEjJxEGlxV5Fl-mX6jx5WWg0",
+          "mode": "list",
+          "cachedResultName": "inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ImyMRxsq9cOGB5KBU1iqEjJxEGlxV5Fl-mX6jx5WWg0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ImyMRxsq9cOGB5KBU1iqEjJxEGlxV5Fl-mX6jx5WWg0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Item Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Item_Name__using_to_match_', ``, 'string') }}",
+            "Available Stock": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Available_Stock', ``, 'string') }}",
+            "Price ($)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Price____', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Item Name"
+          ],
+          "schema": [
+            {
+              "id": "Item Name",
+              "displayName": "Item Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Available Stock",
+              "displayName": "Available Stock",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Price ($)",
+              "displayName": "Price ($)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        192
+      ],
+      "id": "b63be18d-7138-4ed7-a368-05a6417b06e0",
+      "name": "update inventory",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "o7MCSgeyRN47MqSC",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ImyMRxsq9cOGB5KBU1iqEjJxEGlxV5Fl-mX6jx5WWg0",
+          "mode": "list",
+          "cachedResultName": "inventory",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ImyMRxsq9cOGB5KBU1iqEjJxEGlxV5Fl-mX6jx5WWg0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ImyMRxsq9cOGB5KBU1iqEjJxEGlxV5Fl-mX6jx5WWg0/edit#gid=0"
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        96,
+        256
+      ],
+      "id": "da225c26-c7b4-4e8b-ae30-f4500ae23c2f",
+      "name": "search inventory",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "o7MCSgeyRN47MqSC",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update inventory": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "search inventory": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b40d1d8a-0965-4789-8cf2-15cc742a1a5f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "162d591b0cad9a128b2e9f2e82fcc407949d8db3fff779eac51bdbde71f81aa7"
+  },
+  "id": "w1GsNZZIEshNpO5n",
+  "tags": []
+}
