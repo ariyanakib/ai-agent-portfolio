@@ -1,0 +1,457 @@
+{
+  "name": "my first gmail workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -736,
+        416
+      ],
+      "id": "8bec0654-8079-4e2b-a461-b0259e3bed04",
+      "name": "Gmail Trigger",
+      "notesInFlow": false,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Fr7KSQLsVd4lua6Y",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=Subject:{{ $json.subject }}\nEmail body:{{ $json.body }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "new project",
+              "description": "This is any email giving me any work that's need to be done"
+            },
+            {
+              "category": "sponsorship ",
+              "description": "Any email that talking about promotions, collaboration, sponsorship"
+            },
+            {
+              "category": "urgent",
+              "description": "An email sent that mention some word like urgent,emergency"
+            },
+            {
+              "category": "Sales",
+              "description": "Anything regarding clients sending over documents, sales, etc"
+            },
+            {
+              "category": "recruitment",
+              "description": "Anyone looking for a job, or to join our team"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        368
+      ],
+      "id": "d9cf707c-d560-40e8-8cd7-8255f7e7e9ad",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_8824067874140958159"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        64,
+        576
+      ],
+      "id": "76e2ca91-426a-48b6-9b35-c2e5cb519dfc",
+      "name": "SALES",
+      "webhookId": "f546eda8-46ce-42e3-a0de-047ee73a9b33",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Fr7KSQLsVd4lua6Y",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_2153634021784978992"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        80,
+        768
+      ],
+      "id": "0e1923c3-4f1d-4a3f-8d93-37a21525942e",
+      "name": "RECRUITMENT",
+      "webhookId": "f546eda8-46ce-42e3-a0de-047ee73a9b33",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Fr7KSQLsVd4lua6Y",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-1.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        688
+      ],
+      "id": "02dd70d8-7949-4011-9d7b-f5d204b4e0ff",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZtLqqGOIuKXFyP2S",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_6360117722168682165"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -112,
+        48
+      ],
+      "id": "57e371bf-84c6-403b-b34a-a10673b0215e",
+      "name": "new project",
+      "webhookId": "f546eda8-46ce-42e3-a0de-047ee73a9b33",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Fr7KSQLsVd4lua6Y",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_1984092120427754804"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        224
+      ],
+      "id": "9d41fbca-cf34-4139-89ed-f13065eef882",
+      "name": "sponsorship",
+      "webhookId": "f546eda8-46ce-42e3-a0de-047ee73a9b33",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Fr7KSQLsVd4lua6Y",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_1360040888477620055"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        48,
+        416
+      ],
+      "id": "65e7c15b-a39b-4783-9a1e-e7cd10f7ded2",
+      "name": "urgent",
+      "webhookId": "f546eda8-46ce-42e3-a0de-047ee73a9b33",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Fr7KSQLsVd4lua6Y",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "395bc5b3-0d5d-48e5-8bf1-c128b1774847",
+              "name": "subject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "d6d569a9-f578-43f0-b1ef-d93e5950bce2",
+              "name": "body",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -512,
+        416
+      ],
+      "id": "475992a0-c546-49b6-8e43-4bd1e0c8099b",
+      "name": "decode email body"
+    },
+    {
+      "parameters": {
+        "subject": "={{ $json.message.content.Subject }}",
+        "message": "={{ $json.message.content.Body }}",
+        "additionalFields": {
+          "toList": [
+            "={{ $('Gmail Trigger').item.json.headers['return-path'] }}"
+          ],
+          "ccList": []
+        }
+      },
+      "id": "ff27e8de-5bae-46a4-aa86-911c2852d3bd",
+      "name": "Create Gmail Draft",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [
+        1072,
+        192
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Fr7KSQLsVd4lua6Y",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a professional email assistant.  \nAlways write clear, polite, and human-like replies that directly address the sender’s message.  \nKeep the tone professional and adapt to the context (urgent → concise, project inquiry → detailed, collaboration → polite and open, etc.).  \n\nHere is the email you received:\nSubject: {{ $('Gmail Trigger').item.json.headers.subject }}\nBody: {{ $('Gmail Trigger').item.json.text }}\nReturn ONLY valid JSON in this exact format:\n{\n  \"Subject\": \"[new subject here]\",\n  \"Body\": \"[reply here]\"\n}\n\nNow write only the reply email body.  \nDo not include \"Subject:\" in your response.  \nDo not add special characters, emojis, or unnecessary formatting.  \nAlways end with a natural professional closing, such as \"Best regards,\" or \"Sincerely,\" followed by the assistant’s name."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        400,
+        384
+      ],
+      "id": "9082d0e3-4c29-470b-867f-8b7e1343d8a5",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "cIK1cdZ6il3TSXiv",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "decode email body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "new project",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "sponsorship",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "urgent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SALES",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "RECRUITMENT",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        []
+      ]
+    },
+    "SALES": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RECRUITMENT": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "new project": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sponsorship": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "urgent": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "decode email body": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Create Gmail Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "b422e70e-5574-4529-aa25-74ba1debb4e4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "162d591b0cad9a128b2e9f2e82fcc407949d8db3fff779eac51bdbde71f81aa7"
+  },
+  "id": "5f8UoD9mah3n5CXw",
+  "tags": []
+}
