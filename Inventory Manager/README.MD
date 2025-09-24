@@ -3,7 +3,7 @@
 A smart workflow that keeps your stock levels accurate and updated in real time. No more missed items or manual tracking — this solution ensures businesses always know what’s in stock, when to reorder, and how to plan better.
 
 ### 📸 Demo
-![screenshot] 
+![screenshot] (screenshot.png)
 
 ### 🎥 Video Walkthrough
 [▶ Watch Demo](https://youtube.com/unlisted-link)
